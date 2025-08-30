@@ -1,0 +1,159 @@
+FLORIDA STANDARDS FOR ASSESSMENTS IN SCHOOLS AND TEACHING (FAST)
+Learning Standards Extracted from 2024-25 Assessment Data
+============================================================
+
+This file contains all unique learning standards identified in the FAST assessment datasets.
+These standards represent the specific learning objectives measured by the assessments.
+
+TOTAL STANDARDS FOUND: 77 (Grades 3-5)
+TOTAL DOMAIN AREAS: 10 (Grades K-2)
+
+EARLY LITERACY & MATHEMATICS DOMAINS (K-2)
+==========================================
+
+Kindergarten - Grade 2 assessments use domain-based scoring rather than individual standards:
+
+Early Literacy Domains (Grades K-2):
+1. Alphabetic Principle Domain
+2. Concept of Word Domain  
+3. Visual Discrimination Domain
+4. Phonemic Awareness Domain
+5. Phonics Domain
+6. Structural Analysis Domain
+7. Vocabulary Domain
+8. Sentence-Level Comprehension Domain
+9. Paragraph-Level Comprehension Domain
+10. Early Numeracy Domain
+
+Mathematics Domains (Grades K-2):
+- Overall Mathematics Achievement Level (Level 1-5)
+- FAST Equivalent Score
+- Percentile Rank
+
+ENGLISH LANGUAGE ARTS (ELA) STANDARDS
+=====================================
+
+Grade 3 ELA Standards (13 standards):
+- ELA.3.R.1.1 - Reading Prose and Poetry
+- ELA.3.R.1.2 - Reading Prose and Poetry 
+- ELA.3.R.1.3 - Reading Prose and Poetry
+- ELA.3.R.1.4 - Reading Prose and Poetry
+- ELA.3.R.2.1 - Reading Informational Text
+- ELA.3.R.2.2 - Reading Informational Text
+- ELA.3.R.2.3 - Reading Informational Text
+- ELA.3.R.2.4 - Reading Informational Text
+- ELA.3.R.3.1 - Reading Across Genres
+- ELA.3.R.3.2 - Reading Across Genres
+- ELA.3.R.3.3 - Reading Across Genres
+- ELA.3.V.1.2 - Vocabulary
+- ELA.3.V.1.3 - Vocabulary
+
+Grade 4 ELA Standards (13 standards):
+- ELA.4.R.1.1 - Reading Prose and Poetry
+- ELA.4.R.1.2 - Reading Prose and Poetry
+- ELA.4.R.1.3 - Reading Prose and Poetry
+- ELA.4.R.1.4 - Reading Prose and Poetry
+- ELA.4.R.2.1 - Reading Informational Text
+- ELA.4.R.2.2 - Reading Informational Text
+- ELA.4.R.2.3 - Reading Informational Text
+- ELA.4.R.2.4 - Reading Informational Text
+- ELA.4.R.3.1 - Reading Across Genres
+- ELA.4.R.3.2 - Reading Across Genres
+- ELA.4.R.3.3 - Reading Across Genres
+- ELA.4.V.1.2 - Vocabulary
+- ELA.4.V.1.3 - Vocabulary
+
+Grade 5 ELA Standards (13 standards):
+- ELA.5.R.1.1 - Reading Prose and Poetry
+- ELA.5.R.1.2 - Reading Prose and Poetry
+- ELA.5.R.1.3 - Reading Prose and Poetry
+- ELA.5.R.1.4 - Reading Prose and Poetry
+- ELA.5.R.2.1 - Reading Informational Text
+- ELA.5.R.2.2 - Reading Informational Text
+- ELA.5.R.2.3 - Reading Informational Text
+- ELA.5.R.2.4 - Reading Informational Text
+- ELA.5.R.3.1 - Reading Across Genres
+- ELA.5.R.3.2 - Reading Across Genres
+- ELA.5.R.3.3 - Reading Across Genres
+- ELA.5.V.1.2 - Vocabulary
+- ELA.5.V.1.3 - Vocabulary
+
+MATHEMATICS (MA) STANDARDS
+==========================
+
+Grade 3 Mathematics Standards (11 standards):
+- MA.3.AR.1 - Algebraic Reasoning
+- MA.3.AR.2 - Algebraic Reasoning
+- MA.3.AR.3 - Algebraic Reasoning
+- MA.3.DP.1 - Data Analysis and Probability
+- MA.3.FR.1 - Fractional Reasoning
+- MA.3.FR.2 - Fractional Reasoning
+- MA.3.GR.1 - Geometric Reasoning
+- MA.3.GR.2 - Geometric Reasoning
+- MA.3.M.1 - Measurement
+- MA.3.M.2 - Measurement
+- MA.3.NSO.1 - Number Sense and Operations
+- MA.3.NSO.2 - Number Sense and Operations
+
+Grade 4 Mathematics Standards (11 standards):
+- MA.4.AR.1 - Algebraic Reasoning
+- MA.4.AR.2 - Algebraic Reasoning
+- MA.4.AR.3 - Algebraic Reasoning
+- MA.4.DP.1 - Data Analysis and Probability
+- MA.4.FR.1 - Fractional Reasoning
+- MA.4.FR.2 - Fractional Reasoning
+- MA.4.GR.1 - Geometric Reasoning
+- MA.4.GR.2 - Geometric Reasoning
+- MA.4.M.1 - Measurement
+- MA.4.M.2 - Measurement
+- MA.4.NSO.1 - Number Sense and Operations
+- MA.4.NSO.2 - Number Sense and Operations
+
+Grade 5 Mathematics Standards (13 standards):
+- MA.5.AR.1 - Algebraic Reasoning
+- MA.5.AR.2 - Algebraic Reasoning
+- MA.5.AR.3 - Algebraic Reasoning
+- MA.5.DP.1 - Data Analysis and Probability
+- MA.5.FR.1 - Fractional Reasoning
+- MA.5.FR.2 - Fractional Reasoning
+- MA.5.GR.1 - Geometric Reasoning
+- MA.5.GR.2 - Geometric Reasoning
+- MA.5.GR.3 - Geometric Reasoning
+- MA.5.GR.4 - Geometric Reasoning
+- MA.5.M.1 - Measurement
+- MA.5.M.2 - Measurement
+- MA.5.NSO.1 - Number Sense and Operations
+- MA.5.NSO.2 - Number Sense and Operations
+
+STANDARDS CATEGORIES SUMMARY
+============================
+
+ELA Categories:
+- R.1.x = Reading Prose and Poetry (12 standards across grades 3-5)
+- R.2.x = Reading Informational Text (12 standards across grades 3-5)
+- R.3.x = Reading Across Genres (9 standards across grades 3-5)
+- V.1.x = Vocabulary (6 standards across grades 3-5)
+
+Mathematics Categories:
+- AR.x = Algebraic Reasoning (9 standards across grades 3-5)
+- DP.x = Data Analysis and Probability (3 standards across grades 3-5)
+- FR.x = Fractional Reasoning (6 standards across grades 3-5)
+- GR.x = Geometric Reasoning (8 standards across grades 3-5)
+- M.x = Measurement (6 standards across grades 3-5)
+- NSO.x = Number Sense and Operations (6 standards across grades 3-5)
+
+DATA SOURCE
+===========
+- Dataset: FAST 2024-25 Progress Monitoring 1 (PM1)
+- School: Wayman Academy of the Arts
+- District: Duval County
+- Grades: K-5 (K-2 Early Literacy/Math, 3-5 ELA/Math)
+- File Types: CSV and Excel formats
+- Extraction Date: Current
+
+NOTES
+=====
+- Science and Writing standards were in Excel format and not processed in this extraction
+- Early Literacy (K-2) assessments use different domain-based scoring rather than specific standards
+- Each standard can have multiple sub-components (indicated by additional decimal places)
+- Student performance on each standard is measured as "Points Earned" vs "Points Possible"
