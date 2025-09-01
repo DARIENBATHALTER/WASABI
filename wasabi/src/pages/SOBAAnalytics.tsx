@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Users, TrendingUp, Eye, Edit } from 'lucide-react';
+import { Calendar, Users, TrendingUp } from 'lucide-react';
 import { sobaService, type SOBAObservation } from '../services/sobaService';
 import PageWrapper from '../shared/components/PageWrapper';
 import PageHeader from '../shared/components/PageHeader';
@@ -114,18 +114,27 @@ export default function SOBAAnalytics() {
   const LineChart = ({ data, title, color }: { data: ObservationTrend[], title: string, color: string }) => {
     if (data.length === 0) return null;
 
+    // Only display the 8 most recent data points to avoid overflow
+    const displayData = data.slice(-8);
+
     const maxValue = 5;
     const minValue = 1;
     const height = 120;
-    const width = 400;
+    const baseWidth = 400;
     const padding = 40;
+    const rightPadding = 50; // extra space to prevent clipping on the right
+    const minXStep = 60; // ensure readable spacing between points
+    const computedWidth = Math.max(
+      baseWidth,
+      padding + rightPadding + Math.max(displayData.length - 1, 1) * minXStep
+    );
 
-    const xStep = (width - padding * 2) / Math.max(data.length - 1, 1);
+    const xStep = (computedWidth - padding - rightPadding) / Math.max(displayData.length - 1, 1);
     const yScale = (height - padding * 2) / (maxValue - minValue);
 
     const getYValue = (score: number) => height - padding - ((score - minValue) * yScale);
 
-    const pathData = data.map((point, index) => {
+    const pathData = displayData.map((point, index) => {
       const x = padding + (index * xStep);
       let y: number;
       
@@ -152,14 +161,19 @@ export default function SOBAAnalytics() {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">{title}</h4>
-        <svg width={width} height={height} className="w-full">
+        <svg
+          width="100%"
+          height={height}
+          viewBox={`0 0 ${computedWidth} ${height}`}
+          preserveAspectRatio="xMidYMid meet"
+        >
           {/* Grid lines */}
           {[1, 2, 3, 4, 5].map(score => (
             <g key={score}>
               <line
                 x1={padding}
                 y1={getYValue(score)}
-                x2={width - padding}
+                x2={computedWidth - rightPadding}
                 y2={getYValue(score)}
                 stroke="#e5e7eb"
                 strokeWidth="1"
@@ -187,7 +201,7 @@ export default function SOBAAnalytics() {
           />
           
           {/* Data points */}
-          {data.map((point, index) => {
+          {displayData.map((point, index) => {
             const x = padding + (index * xStep);
             let y: number;
             
@@ -213,7 +227,7 @@ export default function SOBAAnalytics() {
           })}
           
           {/* X-axis labels */}
-          {data.map((point, index) => (
+          {displayData.map((point, index) => (
             <text
               key={index}
               x={padding + (index * xStep)}
@@ -231,6 +245,8 @@ export default function SOBAAnalytics() {
   };
 
   const currentFilter = filterType === 'instructor' ? selectedInstructor : selectedHomeroom;
+  // For transposed table: show oldest -> newest left to right
+  const observationsChronological = [...observations].reverse();
 
   return (
     <PageWrapper>
@@ -333,12 +349,13 @@ export default function SOBAAnalytics() {
               </div>
             )}
 
-            {/* Observations Table */}
+            {/* Observations Table (transposed: dates as columns, metrics as rows) */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Historical Observations - {currentFilter}
                 </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Columns are observation dates; rows are metric scores.</p>
               </div>
               
               <div className="overflow-x-auto">
@@ -346,85 +363,95 @@ export default function SOBAAnalytics() {
                   <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Date
+                        Metric
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        {filterType === 'instructor' ? 'Homeroom' : 'Instructor'}
-                      </th>
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Class Engagement
-                      </th>
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Planning
-                      </th>
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Instruction
-                      </th>
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Environment
-                      </th>
-                      <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Responsibility
-                      </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                        Actions
-                      </th>
+                      {observationsChronological.map((observation) => (
+                        <th
+                          key={observation.observationId}
+                          className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap"
+                          title={formatDate(observation.observationTimestamp)}
+                        >
+                          {new Date(observation.observationTimestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {observations.map((observation) => (
-                      <tr key={observation.observationId} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {formatDate(observation.observationTimestamp)}
+                    {/* Class Engagement row */}
+                    <tr>
+                      <td className="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        Class Engagement
+                      </td>
+                      {observationsChronological.map((observation) => (
+                        <td
+                          key={`${observation.observationId}-eng`}
+                          className={`px-4 py-3 text-center whitespace-nowrap font-medium ${getScoreColor(observation.classEngagementScore)}`}
+                          title={formatDate(observation.observationTimestamp)}
+                        >
+                          {observation.classEngagementScore}/5
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                          {filterType === 'instructor' ? observation.homeroom : observation.teacherName}
+                      ))}
+                    </tr>
+                    {/* Planning row */}
+                    <tr>
+                      <td className="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        Planning
+                      </td>
+                      {observationsChronological.map((observation) => (
+                        <td
+                          key={`${observation.observationId}-plan`}
+                          className={`px-4 py-3 text-center whitespace-nowrap font-medium ${getScoreColor(observation.teacherScorePlanning)}`}
+                          title={formatDate(observation.observationTimestamp)}
+                        >
+                          {observation.teacherScorePlanning}/5
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(observation.classEngagementScore)}`}>
-                            {observation.classEngagementScore}/5
-                          </span>
+                      ))}
+                    </tr>
+                    {/* Instruction row */}
+                    <tr>
+                      <td className="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        Instruction
+                      </td>
+                      {observationsChronological.map((observation) => (
+                        <td
+                          key={`${observation.observationId}-instr`}
+                          className={`px-4 py-3 text-center whitespace-nowrap font-medium ${getScoreColor(observation.teacherScoreDelivery)}`}
+                          title={formatDate(observation.observationTimestamp)}
+                        >
+                          {observation.teacherScoreDelivery}/5
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(observation.teacherScorePlanning)}`}>
-                            {observation.teacherScorePlanning}/5
-                          </span>
+                      ))}
+                    </tr>
+                    {/* Environment row */}
+                    <tr>
+                      <td className="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        Environment
+                      </td>
+                      {observationsChronological.map((observation) => (
+                        <td
+                          key={`${observation.observationId}-env`}
+                          className={`px-4 py-3 text-center whitespace-nowrap font-medium ${getScoreColor(observation.teacherScoreEnvironment)}`}
+                          title={formatDate(observation.observationTimestamp)}
+                        >
+                          {observation.teacherScoreEnvironment}/5
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(observation.teacherScoreDelivery)}`}>
-                            {observation.teacherScoreDelivery}/5
-                          </span>
+                      ))}
+                    </tr>
+                    {/* Responsibility row */}
+                    <tr>
+                      <td className="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                        Responsibility
+                      </td>
+                      {observationsChronological.map((observation) => (
+                        <td
+                          key={`${observation.observationId}-resp`}
+                          className={`px-4 py-3 text-center whitespace-nowrap font-medium ${getScoreColor(observation.teacherScoreFeedback)}`}
+                          title={formatDate(observation.observationTimestamp)}
+                        >
+                          {observation.teacherScoreFeedback}/5
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(observation.teacherScoreEnvironment)}`}>
-                            {observation.teacherScoreEnvironment}/5
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getScoreColor(observation.teacherScoreFeedback)}`}>
-                            {observation.teacherScoreFeedback}/5
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                          <div className="flex items-center justify-end space-x-2">
-                            <Link
-                              to={`/soba/${observation.observationId}`}
-                              className="inline-flex items-center px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-medium rounded-lg transition-colors"
-                            >
-                              <Eye size={14} className="mr-1" />
-                              View
-                            </Link>
-                            <Link
-                              to={`/soba/${observation.observationId}/edit`}
-                              className="inline-flex items-center px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium rounded-lg transition-colors"
-                            >
-                              <Edit size={14} className="mr-1" />
-                              Edit
-                            </Link>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                      ))}
+                    </tr>
                   </tbody>
                 </table>
               </div>

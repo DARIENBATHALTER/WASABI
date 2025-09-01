@@ -2,6 +2,8 @@ import { X, Users, UserCheck, ChevronDown, ChevronUp, ArrowUpDown, Flag, Search,
 import { useQuery } from '@tanstack/react-query';
 import { useStudentSearch, type SortField, type SortDirection } from '../../hooks/useStudentSearch';
 import StudentAvatar from '../../shared/components/StudentAvatar';
+import InstructorName from '../../shared/components/InstructorName';
+import { useInstructorDisplayNames } from '../../contexts/InstructorNameContext';
 import { useStore } from '../../store';
 import { useState, useEffect, useRef } from 'react';
 import type { StudentSearchResult } from '../../hooks/useStudentSearch';
@@ -85,12 +87,15 @@ export default function StudentSearchResults({
       
       const grades = [...new Set(allStudents.map(s => s.grade?.toString()).filter(Boolean))].sort();
       const genders = [...new Set(allStudents.map(s => s.gender).filter(Boolean))];
-      const homerooms = [...new Set(allStudents.map(s => s.className).filter(Boolean))].sort();
+      const originalHomerooms = [...new Set(allStudents.map(s => s.className).filter(Boolean))].sort();
       
-      return { grades, genders, homerooms };
+      return { grades, genders, homerooms: originalHomerooms };
     },
     staleTime: 5 * 60 * 1000 // Cache for 5 minutes
   });
+  
+  // Get mapped homeroom names for the filter dropdown
+  const mappedHomeroomNames = useInstructorDisplayNames(filterOptions?.homerooms || []);
   
   // Get flagged students with their flag information
   const { data: flaggedStudentData = new Map() } = useQuery({
@@ -313,7 +318,7 @@ export default function StudentSearchResults({
   });
 
   return (
-    <PageWrapper>
+    <PageWrapper className="overflow-visible">
       <PageHeader
         title="Student Search"
         description="Search and filter students to view detailed profiles"
@@ -321,9 +326,9 @@ export default function StudentSearchResults({
         iconColor="text-blue-600"
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6 overflow-visible">
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-visible">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -442,7 +447,7 @@ export default function StudentSearchResults({
                           </button>
                         </div>
                         <div className="max-h-48 overflow-y-auto">
-                          {filterOptions.homerooms.map(homeroom => (
+                          {filterOptions.homerooms.map((homeroom, index) => (
                             <label key={homeroom} className="flex items-center gap-2 px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
                               <input
                                 type="checkbox"
@@ -450,7 +455,9 @@ export default function StudentSearchResults({
                                 onChange={(e) => toggleFilter(homeroom, homeroomFilter, setHomeroomFilter)}
                                 className="rounded border-gray-300 text-wasabi-green focus:ring-wasabi-green"
                               />
-                              <span className="text-sm text-gray-700 dark:text-gray-300">{homeroom}</span>
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                {mappedHomeroomNames[index] || homeroom}
+                              </span>
                             </label>
                           ))}
                         </div>
@@ -485,7 +492,7 @@ export default function StudentSearchResults({
       </div>
 
       {/* Results Table */}
-      <div className="overflow-hidden">
+      <div className="overflow-visible">
         <table className="w-full">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
@@ -582,7 +589,7 @@ export default function StudentSearchResults({
                             />
                           ))}
                         </div>
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 min-w-max">
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-[9999] min-w-max">
                           <div className="max-w-xs">
                             {flagInfo.flagNames.length === 1 ? (
                               <div className="flex items-center gap-2">
@@ -616,7 +623,7 @@ export default function StudentSearchResults({
                               </div>
                             )}
                           </div>
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900 z-[9999]"></div>
                         </div>
                       </div>
                     );
@@ -672,7 +679,10 @@ export default function StudentSearchResults({
                   })()}
                 </td>
                 <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-                  {student.className || 'Not assigned'}
+                  <InstructorName 
+                    originalName={student.className || ''} 
+                    fallback="Not assigned"
+                  />
                 </td>
                 <td className="px-4 py-3 text-center">
                   <button

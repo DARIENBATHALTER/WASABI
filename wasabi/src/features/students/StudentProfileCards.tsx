@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, X, ChevronDown, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import StudentAvatar from '../../shared/components/StudentAvatar';
+import InstructorName from '../../shared/components/InstructorName';
 import type { StudentSearchResult } from '../../hooks/useStudentSearch';
 import { useStore } from '../../store';
 import { db } from '../../lib/db';
@@ -755,7 +756,12 @@ export default function StudentProfileCards({ students, onBack }: StudentProfile
                         </div>
                         <div>
                           <span className="text-gray-600 dark:text-gray-400">HR Teacher:</span>
-                          <span className="ml-2 text-gray-900 dark:text-gray-100">{student.className || 'Not assigned'}</span>
+                          <span className="ml-2 text-gray-900 dark:text-gray-100">
+                            <InstructorName 
+                              originalName={student.className || ''} 
+                              fallback="Not assigned"
+                            />
+                          </span>
                         </div>
                         <div>
                           <span className="text-gray-600 dark:text-gray-400">Gender:</span>

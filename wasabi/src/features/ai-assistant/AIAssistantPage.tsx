@@ -200,10 +200,10 @@ export default function AIAssistantPage() {
   }
 
   return (
-    <div className="h-full p-6 dark:bg-gray-900" style={{ backgroundColor: theme === 'dark' ? undefined : '#d1d9e3' }}>
+    <div className="h-full p-4 dark:bg-gray-900" style={{ backgroundColor: theme === 'dark' ? undefined : '#d1d9e3' }}>
       <div className="h-full max-w-6xl mx-auto flex flex-col bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 rounded-t-lg">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-3 rounded-t-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <SpiralIcon size={24} className="text-purple-500" />
@@ -215,7 +215,7 @@ export default function AIAssistantPage() {
                 </span>
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                AI-Powered Student Analytics and Insights
+                AI-Powered Student Analytics and Insights • 🔒 Chat sessions are not saved
               </p>
             </div>
           </div>
@@ -244,15 +244,9 @@ export default function AIAssistantPage() {
         </div>
       </div>
 
-      {/* Session warning */}
-      <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-3">
-        <p className="text-sm text-yellow-700 dark:text-yellow-300 text-center">
-          🔒 For security, chat sessions are not saved
-        </p>
-      </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {noriMessages.length === 0 ? (
           <div className="text-center py-12">
             <SpiralIcon size={64} className="mx-auto mb-4 text-purple-500 opacity-50" />
@@ -310,7 +304,7 @@ export default function AIAssistantPage() {
               )}
               
               <div
-                className={`max-w-[70%] rounded-lg px-4 py-2 ${
+                className={`max-w-[70%] rounded-lg px-3 py-2 ${
                   message.role === 'user'
                     ? 'bg-blue-500 text-white ml-auto'
                     : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700'
@@ -370,7 +364,7 @@ export default function AIAssistantPage() {
       </div>
 
       {/* Input Area */}
-      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 rounded-b-lg">
+      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-3 rounded-b-lg">
         <div className="flex gap-2">
           <div className="flex-1 relative">
             <textarea

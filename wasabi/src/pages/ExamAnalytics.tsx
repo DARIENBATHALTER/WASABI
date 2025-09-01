@@ -1094,8 +1094,8 @@ export default function ExamAnalytics() {
         )}
 
 
-        {/* Detailed Standard Analysis Button */}
-        {testAnalytics && !loading && (
+        {/* Detailed Standard Analysis Button - Hide for iReady tests */}
+        {testAnalytics && !loading && selectedTest && !selectedTest.startsWith('IREADY') && (
           <div className="mb-6">
             <button
               onClick={() => setIsDetailModalOpen(true)}
@@ -1123,7 +1123,7 @@ export default function ExamAnalytics() {
         )}
 
         {/* Streamlined Standards Performance Table */}
-        {testAnalytics && !loading && !selectedTest?.startsWith('IREADY_') && (
+        {testAnalytics && !loading && selectedTest && !selectedTest?.startsWith('IREADY_') && (
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
               <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100">

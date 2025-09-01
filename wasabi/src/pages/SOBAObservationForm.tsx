@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Plus, X, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Save, Plus, X, Lightbulb, Trash2 } from 'lucide-react';
 import { sobaService, type SOBAObservation, type SOBAStudentNote } from '../services/sobaService';
 import { db } from '../lib/db';
 import PageWrapper from '../shared/components/PageWrapper';
@@ -372,6 +372,24 @@ export default function SOBAObservationForm() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!id) return;
+    
+    const confirmDelete = window.confirm('Are you sure you want to delete this observation? This action cannot be undone.');
+    if (!confirmDelete) return;
+    
+    try {
+      setLoading(true);
+      await sobaService.deleteObservation(id);
+      navigate('/soba');
+    } catch (error) {
+      console.error('Error deleting observation:', error);
+      alert('Failed to delete observation. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddStudentNote = (note: Omit<SOBAStudentNote, 'noteId' | 'noteTimestamp'>) => {
     setStudentNotes(prev => [...prev, note]);
   };
@@ -395,14 +413,26 @@ export default function SOBAObservationForm() {
           <ArrowLeft size={16} className="mr-1" />
           Back
         </button>
-        <button
-          onClick={handleSubmit}
-          disabled={!isFormValid() || loading}
-          className="inline-flex items-center px-4 py-2 bg-wasabi-green text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Save size={20} className="mr-2" />
-          {loading ? 'Saving...' : 'Save Observation'}
-        </button>
+        <div className="flex items-center space-x-3">
+          {isEdit && (
+            <button
+              onClick={handleDelete}
+              disabled={loading}
+              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Trash2 size={20} className="mr-2" />
+              {loading ? 'Deleting...' : 'Delete'}
+            </button>
+          )}
+          <button
+            onClick={handleSubmit}
+            disabled={!isFormValid() || loading}
+            className="inline-flex items-center px-4 py-2 bg-wasabi-green text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <Save size={20} className="mr-2" />
+            {loading ? 'Saving...' : 'Save Observation'}
+          </button>
+        </div>
       </PageHeader>
 
       <div className="max-w-7xl mx-auto px-6 py-8">

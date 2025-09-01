@@ -93,6 +93,10 @@ CRITICAL CAPABILITIES - You can answer specific questions like:
 - "What grades did [Student] get in Math last month?" - Use allGrades with date filtering
 - "When was [Student]'s last absence?" - Sort attendance records by date
 - "What was the specific incident on [date]?" - Match incident date and provide full details
+- "Tell me about recent SOBA observations" - Use sobaObservations data with class engagement scores and teacher feedback
+- "What SOBA notes do we have on [Student]?" - Check sobaStudentNotes for individual observations
+- "How is [Teacher]'s classroom engagement?" - Analyze SOBA observation data by teacher/homeroom
+- "What instructional strategies have been noted for [Student]?" - Review SOBA student notes by category
 
 GPA DIFFERENTIATION REQUIREMENTS:
 When discussing GPA, ALWAYS differentiate between:
@@ -117,16 +121,20 @@ SUBJECT-AREA COMPREHENSIVE ANALYSIS:
 When asked about subject areas (reading, math, ELA, etc.), provide COMPREHENSIVE REPORTS that include:
 - CLASSROOM GRADES: Specific subject grades, assignment details, trends over time
 - iREADY ASSESSMENTS: Domain-specific scores (phonics, vocabulary, comprehension for reading; number operations, algebra, geometry for math)
-- FAST ASSESSMENTS: Component scores and standards-based mastery levels
-- CROSS-CORRELATION ANALYSIS: Compare classroom performance vs. standardized assessments
+- FAST ASSESSMENTS: Component scores and standards-based mastery levels (ELA, Math, Science, Writing)
+- SOBA INSTRUCTIONAL OBSERVATIONS: Teacher feedback, classroom engagement, instructional quality scores
+- SOBA STUDENT NOTES: Individual observations by category (engagement, behavior, academic, strategy)
+- CROSS-CORRELATION ANALYSIS: Compare classroom performance vs. standardized assessments vs. observational data
 - STANDARDS MASTERY: Specific skill areas where student excels or struggles
-- INTERVENTION RECOMMENDATIONS: Targeted suggestions based on data patterns
+- INTERVENTION RECOMMENDATIONS: Targeted suggestions based on data patterns and observational insights
 
 Examples of comprehensive subject queries:
 - "Tell me about 1st grade's reading comprehension" → Analyze ALL 1st grade students, not just one
-- "Tell me about [Student]'s reading comprehension" → Analyze reading grades + iReady Reading domains + FAST ELA comprehension + correlations
-- "How is [Student] doing in math?" → Math grades + iReady Math domains + FAST Math standards + cross-analysis
-- "What are [Student]'s strengths in ELA?" → All language arts data with specific skill identification
+- "Tell me about [Student]'s reading comprehension" → Analyze reading grades + iReady Reading domains + FAST ELA comprehension + SOBA notes + correlations
+- "How is [Student] doing in math?" → Math grades + iReady Math domains + FAST Math standards + SOBA observations + cross-analysis
+- "What are [Student]'s strengths in ELA?" → All language arts data with specific skill identification + instructional observations
+- "Tell me about recent SOBA observations" → Classroom engagement, teacher feedback, instructional quality scores
+- "How are our FAST Science scores this year?" → FAST Science assessment data with grade-level breakdowns and trends
 
 RANKING AND COMPARISON QUERIES:
 When asked for rankings (e.g., "lowest GPA", "highest scores", "attendance challenges"), provide:
@@ -267,6 +275,8 @@ ${context?.attendance ? `• ATTENDANCE DATA (${context.attendance.length} stude
 ` : ''}${context?.assessments ? `• ASSESSMENT SCORES (${context.assessments.length} records): iReady Reading/Math scores, FAST ELA/Math/Science/Writing results, percentiles, grade levels, test dates
 ` : ''}${context?.discipline ? `• DISCIPLINE DATA (${context.discipline.length} students): Incident counts, behavioral trends, severity levels, intervention records, location data
 ` : ''}${context?.flags ? `• ACTIVE FLAGS (${context.flags.length} total): Automated risk indicators, flag categories, trigger thresholds, creation dates
+` : ''}${context?.sobaObservations ? `• SOBA CLASSROOM OBSERVATIONS (${context.sobaObservations.length} observations): Teacher feedback, class engagement scores (1-5 scale), instructional quality ratings for planning/delivery/environment/feedback (1-5 scale)
+` : ''}${context?.sobaStudentNotes ? `• SOBA STUDENT NOTES (${context.sobaStudentNotes.length} notes): Individual student observations, engagement tracking, instructional strategies, behavior notes by category
 ` : ''}${context?.students ? `• STUDENT DEMOGRAPHICS (${context.students.length} students): Grade levels, classroom assignments, enrollment data, basic demographics
 ` : ''}
 
@@ -320,6 +330,28 @@ ${this.buildActualDataSample(context)}`;
       sample += 'ACTIVE FLAGS (sample):\n';
       context.flags.slice(0, 5).forEach((flag: any, i: number) => {
         sample += `Flag ${i + 1}: ${flag.flagName} (${flag.color}) - ${flag.message}\n`;
+      });
+      sample += '\n';
+    }
+    
+    // Show SOBA observations data
+    if (context.sobaObservations?.length > 0) {
+      sample += 'SOBA CLASSROOM OBSERVATIONS (sample):\n';
+      context.sobaObservations.slice(0, 3).forEach((obs: any, i: number) => {
+        sample += `Observation ${i + 1}: ${obs.homeroom} (${obs.teacherName}) - Engagement: ${obs.classEngagementScore}/5\n`;
+        sample += `  Planning: ${obs.teacherScorePlanning}/5, Delivery: ${obs.teacherScoreDelivery}/5, Environment: ${obs.teacherScoreEnvironment}/5, Feedback: ${obs.teacherScoreFeedback}/5\n`;
+        if (obs.classEngagementNotes) sample += `  Notes: ${obs.classEngagementNotes.substring(0, 100)}...\n`;
+      });
+      sample += '\n';
+    }
+    
+    // Show SOBA student notes data
+    if (context.sobaStudentNotes?.length > 0) {
+      sample += 'SOBA STUDENT NOTES (sample):\n';
+      context.sobaStudentNotes.slice(0, 5).forEach((note: any, i: number) => {
+        const student = context.students?.find((s: any) => s.id === note.studentId);
+        const studentName = student?.name || `Student ${i + 1}`;
+        sample += `${studentName} (${note.category || 'general'}): ${note.noteText.substring(0, 80)}...\n`;
       });
       sample += '\n';
     }

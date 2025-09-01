@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Edit3, Save, X, Plus, AlertCircle } from 'lucide-react';
 import { db } from '../../lib/db';
+import { instructorNameMappingService } from '../../services/instructorNameMapping';
+import { useInstructorNames } from '../../contexts/InstructorNameContext';
 import type { Student } from '../../shared/types';
 
 interface InstructorMapping {
@@ -15,6 +17,7 @@ export default function InstructorNames() {
   const [editValue, setEditValue] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const { reloadMappings } = useInstructorNames();
 
   useEffect(() => {
     loadInstructors();
@@ -38,8 +41,8 @@ export default function InstructorNames() {
         }
       });
 
-      // Load any existing mappings from settings
-      const mappings = await loadInstructorMappings();
+      // Load any existing mappings from the service
+      const mappings = await instructorNameMappingService.loadMappings();
       
       const instructorList: InstructorMapping[] = Array.from(instructorCounts.entries())
         .map(([name, count]) => ({
@@ -57,24 +60,18 @@ export default function InstructorNames() {
     }
   };
 
-  const loadInstructorMappings = async (): Promise<Record<string, string>> => {
-    try {
-      const settings = await db.settings.get('instructorNameMappings');
-      return settings?.value || {};
-    } catch (error) {
-      console.error('Error loading instructor mappings:', error);
-      return {};
-    }
-  };
 
   const saveInstructorMappings = async (mappings: Record<string, string>) => {
     try {
-      await db.settings.put({
-        key: 'instructorNameMappings',
-        value: mappings
-      });
+      console.log('🔄 Saving instructor mappings:', mappings);
+      await instructorNameMappingService.saveMappings(mappings);
+      console.log('✅ Mappings saved successfully');
+      
+      // Trigger global context reload
+      await reloadMappings();
+      console.log('✅ Context reloaded');
     } catch (error) {
-      console.error('Error saving instructor mappings:', error);
+      console.error('❌ Error saving instructor mappings:', error);
       throw error;
     }
   };
@@ -85,19 +82,25 @@ export default function InstructorNames() {
   };
 
   const handleSave = async (originalName: string) => {
-    if (editValue.trim() === '') return;
+    if (editValue.trim() === '') {
+      console.warn('❌ Cannot save empty instructor name');
+      return;
+    }
 
     try {
+      console.log('🔄 Starting save for:', originalName, '→', editValue.trim());
       setSaving(originalName);
       
-      // Load current mappings
-      const currentMappings = await loadInstructorMappings();
+      // Load current mappings from service
+      const currentMappings = await instructorNameMappingService.loadMappings();
+      console.log('📋 Current mappings loaded:', currentMappings);
       
       // Update mapping
       const updatedMappings = {
         ...currentMappings,
         [originalName]: editValue.trim()
       };
+      console.log('📝 Updated mappings:', updatedMappings);
       
       // Save to database
       await saveInstructorMappings(updatedMappings);
@@ -111,8 +114,9 @@ export default function InstructorNames() {
       
       setEditingId(null);
       setEditValue('');
+      console.log('✅ Save completed successfully');
     } catch (error) {
-      console.error('Error saving instructor name:', error);
+      console.error('❌ Error saving instructor name:', error);
     } finally {
       setSaving(null);
     }
@@ -127,8 +131,8 @@ export default function InstructorNames() {
     try {
       setSaving(originalName);
       
-      // Load current mappings
-      const currentMappings = await loadInstructorMappings();
+      // Load current mappings from service
+      const currentMappings = await instructorNameMappingService.loadMappings();
       
       // Remove mapping (reset to original)
       const updatedMappings = { ...currentMappings };

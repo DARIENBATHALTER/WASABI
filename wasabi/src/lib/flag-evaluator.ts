@@ -247,14 +247,34 @@ async function evaluateGPAFlag(student: Student, rule: FlagRule): Promise<{ isFl
  * Evaluate iReady-based flags
  */
 async function evaluateIReadyFlag(student: Student, rule: FlagRule): Promise<{ isFlagged: boolean; message: string }> {
-  const assessments = await db.assessments
-    .where('studentId')
-    .equals(student.id)
-    .and(a => a.source?.includes('iReady'))
-    .toArray();
+  // Filter assessments based on the specific rule category (iready-reading vs iready-math)
+  let assessments;
+  let subject;
+  
+  if (rule.category === 'iready-reading') {
+    assessments = await db.assessments
+      .where('studentId')
+      .equals(student.id)
+      .and(a => 
+        (a.source === 'iReady Reading' || a.source === 'iReady') && 
+        (a.subject === 'Reading' || a.subject === 'ELA' || a.subject === 'Reading - Overall' || a.subject === 'Reading - Comprehensive' || a.subject?.includes('Reading'))
+      )
+      .toArray();
+    subject = 'Reading';
+  } else { // iready-math
+    assessments = await db.assessments
+      .where('studentId')
+      .equals(student.id)
+      .and(a => 
+        (a.source === 'iReady Math' || a.source === 'iReady') && 
+        (a.subject === 'Math' || a.subject === 'Math - Overall' || a.subject === 'Math - Comprehensive' || a.subject?.includes('Math'))
+      )
+      .toArray();
+    subject = 'Math';
+  }
   
   if (assessments.length === 0) {
-    return { isFlagged: false, message: 'No iReady data' };
+    return { isFlagged: false, message: `No iReady ${subject} data` };
   }
   
   // Get most recent assessment
@@ -280,7 +300,7 @@ async function evaluateIReadyFlag(student: Student, rule: FlagRule): Promise<{ i
   
   return {
     isFlagged,
-    message: `Latest iReady score: ${score} (${rule.criteria.condition} ${threshold})`
+    message: `Latest iReady ${subject} score: ${score} (${rule.criteria.condition} ${threshold})`
   };
 }
 

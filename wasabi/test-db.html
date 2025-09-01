@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test DB</title>
+</head>
+<body>
+    <h1>IndexedDB User Check</h1>
+    <button onclick="checkUsers()">Check Users</button>
+    <div id="results"></div>
+    <script>
+        async function checkUsers() {
+            const dbRequest = indexedDB.open('WASABIDatabase');
+            dbRequest.onsuccess = function(event) {
+                const db = event.target.result;
+                const transaction = db.transaction(['users'], 'readonly');
+                const objectStore = transaction.objectStore('users');
+                const request = objectStore.getAll();
+                
+                request.onsuccess = function(event) {
+                    const users = event.target.result;
+                    document.getElementById('results').innerHTML = '<pre>' + 
+                        JSON.stringify(users, null, 2) + '</pre>';
+                };
+            };
+        }
+    </script>
+</body>
+</html>

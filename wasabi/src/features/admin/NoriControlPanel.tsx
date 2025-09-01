@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, Database, Users, FileText, BarChart3, AlertTriangle, CheckCircle, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Bot, Database, Users, FileText, BarChart3, AlertTriangle, CheckCircle, Sparkles, Eye, EyeOff, ClipboardList } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { db } from '../../lib/db';
 import { StudentDataRetrieval, type StudentDataContext } from '../../services/studentDataRetrieval';

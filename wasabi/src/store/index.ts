@@ -3,6 +3,20 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Student } from '../shared/types';
 import type { StudentSearchResult } from '../hooks/useStudentSearch';
 
+// Fallback UUID generation for environments without crypto.randomUUID
+function generateUUID(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  
+  // Fallback implementation
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -90,7 +104,7 @@ export const useStore = create<AppState>()(
       setCurrentUser: (user) => {
         // Add session token and login time if user is being set
         if (user) {
-          const sessionToken = crypto.randomUUID();
+          const sessionToken = generateUUID();
           const loginTime = new Date();
           user = { ...user, sessionToken, loginTime };
         }

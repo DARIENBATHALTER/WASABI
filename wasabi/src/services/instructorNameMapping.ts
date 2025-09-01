@@ -7,6 +7,7 @@ export interface InstructorNameMapping {
 class InstructorNameMappingService {
   private mappings: InstructorNameMapping = {};
   private loaded = false;
+  private listeners: Array<() => void> = [];
 
   // Load mappings from database
   async loadMappings(): Promise<InstructorNameMapping> {
@@ -74,6 +75,7 @@ class InstructorNameMappingService {
       });
       this.mappings = mappings;
       this.loaded = true;
+      this.notifyListeners();
     } catch (error) {
       console.error('Error saving instructor name mappings:', error);
       throw error;
@@ -95,7 +97,32 @@ class InstructorNameMappingService {
   // Force reload mappings from database
   async reloadMappings(): Promise<InstructorNameMapping> {
     this.loaded = false;
-    return await this.loadMappings();
+    const mappings = await this.loadMappings();
+    this.notifyListeners();
+    return mappings;
+  }
+
+  // Subscribe to mapping changes (for React context)
+  subscribe(listener: () => void): () => void {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
+  }
+
+  // Notify all listeners of mapping changes
+  private notifyListeners(): void {
+    this.listeners.forEach(listener => listener());
+  }
+
+  // Get current mappings (sync)
+  getCurrentMappings(): InstructorNameMapping {
+    return { ...this.mappings };
+  }
+
+  // Check if mappings are loaded
+  isLoaded(): boolean {
+    return this.loaded;
   }
 }
 

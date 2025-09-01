@@ -36,14 +36,18 @@ export default function SOBAObservations() {
     ? observations.slice(0, 25) // Show only 25 most recent
     : observations.filter(obs => obs.homeroom === selectedHomeroom).slice(0, 25);
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | string) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid Date';
+    }
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
       hour: 'numeric',
       minute: '2-digit'
-    }).format(date);
+    }).format(dateObj);
   };
 
   const getEngagementColor = (score: number) => {

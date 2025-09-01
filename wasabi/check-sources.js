@@ -1,0 +1,1 @@
+console.log('🔍 Checking iReady sources...'); db.assessments.toArray().then(assessments => { const sources = [...new Set(assessments.filter(a => a.source?.includes('iReady')).map(a => a.source))]; console.log('iReady sources found:', sources); });

@@ -167,10 +167,13 @@ export default function NoriBubble() {
       {/* Mini Chat Window */}
       {showMiniChat && (
         <div className="fixed bottom-28 right-6 z-50 w-96 h-[520px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl flex flex-col">
-          <div className="bg-purple-500 text-white p-4 rounded-t-xl flex items-center justify-between">
+          <div className="bg-purple-500 text-white p-3 rounded-t-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <SpiralIcon size={22} className="text-white" />
-              <span className="font-medium text-lg">Nori</span>
+              <div>
+                <div className="font-medium text-lg">Nori</div>
+                <div className="text-xs text-purple-100">🔒 Sessions not saved</div>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <button
@@ -190,18 +193,12 @@ export default function NoriBubble() {
             </div>
           </div>
           
-          {/* Session warning */}
-          <div className="bg-yellow-50 dark:bg-yellow-900/20 border-b border-yellow-200 dark:border-yellow-800 px-4 py-3">
-            <p className="text-sm text-yellow-700 dark:text-yellow-300">
-              🔒 For security, chat sessions are not saved
-            </p>
-          </div>
 
           {/* Mini chat messages */}
-          <div className="flex-1 overflow-y-auto p-5">
+          <div className="flex-1 overflow-y-auto p-4">
             {noriMessages.length === 0 ? (
               <div className="py-6">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-xl px-4 py-4 text-sm text-gray-900 dark:text-gray-100 mb-4">
+                <div className="bg-gray-100 dark:bg-gray-700 rounded-xl px-3 py-3 text-sm text-gray-900 dark:text-gray-100 mb-4">
                   <div className="flex items-center gap-3 mb-3">
                     <SpiralIcon size={18} className="text-purple-500" />
                     <span className="font-medium text-sm text-purple-600 dark:text-purple-400">Nori</span>
@@ -224,7 +221,7 @@ export default function NoriBubble() {
               <div className="space-y-4">
                 {noriMessages.map((message) => (
                   <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] rounded-xl px-4 py-3 text-sm ${
+                    <div className={`max-w-[85%] rounded-xl px-3 py-2 text-sm ${
                       message.role === 'user' 
                         ? 'bg-purple-500 text-white' 
                         : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
@@ -268,7 +265,7 @@ export default function NoriBubble() {
           </div>
 
           {/* Mini input */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 p-3">
             <div className="flex gap-3">
               <input
                 type="text"
@@ -276,7 +273,7 @@ export default function NoriBubble() {
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                 placeholder="Ask Nori anything..."
-                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 disabled={isLoading}
               />
               <button

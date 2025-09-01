@@ -12,9 +12,13 @@ import type { SOBAObservation, SOBAStudentNote } from '../../services/sobaServic
 
 export interface User {
   id?: number;
-  username: string;
-  role: 'admin' | 'teacher';
+  email: string;
+  name: string;
+  role: string;
+  password: string;
   createdAt: Date;
+  lastLogin?: Date;
+  isActive: boolean;
 }
 
 export interface Settings {
@@ -122,6 +126,31 @@ class WasabiDatabase extends Dexie {
       sobaStudentNotes: 'noteId, observationId, studentId, homeroom, noteTimestamp',
       matchingReports: '++id, datasetType, uploadDate',
       settings: 'key'
+    });
+
+    // Version 8: Update users table for admin system
+    this.version(8).stores({
+      users: '++id, email, name, role, isActive',
+      students: 'id, studentNumber, flId, firstName, lastName, grade, dateOfBirth',
+      dataSources: 'id, type, uploadDate',
+      attendance: '[studentId+date], studentId, date, matchedBy, matchConfidence',
+      grades: '++id, studentId, course, matchedBy, matchConfidence',
+      discipline: '++id, studentId, incidentDate, infractionCode, matchedBy, matchConfidence',
+      assessments: '++id, studentId, source, testDate, subject, matchedBy, matchConfidence',
+      sobaObservations: 'observationId, homeroom, observationTimestamp',
+      sobaStudentNotes: 'noteId, observationId, studentId, homeroom, noteTimestamp',
+      matchingReports: '++id, datasetType, uploadDate',
+      settings: 'key'
+    }).upgrade(trans => {
+      // Initialize default admin user
+      return trans.table('users').add({
+        email: 'techsupport@wayman.org',
+        name: 'Tech Support',
+        role: 'Administrator',
+        password: 'OOoo00))',
+        createdAt: new Date(),
+        isActive: true
+      });
     });
   }
 }
